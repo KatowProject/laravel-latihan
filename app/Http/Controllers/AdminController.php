@@ -110,4 +110,42 @@ class AdminController extends Controller
             ], 404);
         }
     }
+
+    public function activation_account($id)
+    {
+        $user = User::find($id);
+
+        if ($user) {
+            User::where('id', $id)->update(['status' => 'aktif']);
+
+            return response()->json([
+                "msg" => "UserID: $id berhasil diaktifkan",
+                "data" => $user
+            ], 200);
+        } else {
+            return response()->json([
+                "msg" => "UserID: $id tidak ditemukan",
+                "data" => "Not Found"
+            ], 404);
+        }
+    }
+
+    public function deactivation_account($id)
+    {
+        $user = User::find($id);
+
+        if ($user) {
+            User::where('id', $id)->update(['status' => 'nonaktif']);
+
+            return response()->json([
+                "msg" => "UserID: $id berhasil dinonaktifkan",
+                "data" => $user
+            ], 200);
+        } else {
+            return response()->json([
+                "msg" => "UserID: $id tidak ditemukan",
+                "data" => "Not Found"
+            ], 404);
+        }
+    }
 }
