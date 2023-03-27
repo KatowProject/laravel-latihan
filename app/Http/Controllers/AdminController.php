@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Recipe;
+use App\Models\Tool;
+use App\Models\Ingredients;
 use Helper\MessageError;
 
 class AdminController extends Controller
@@ -147,5 +150,59 @@ class AdminController extends Controller
                 "data" => "Not Found"
             ], 404);
         }
+    }
+
+    public function create_recipe(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'judul' => 'required|max:255',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cara_pembuatan' => 'required',
+            'video' => 'required',
+            'user_email' => 'required',
+            'bahan' => 'required',
+            'alat' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return MessageError::message($validator->errors()->messages());
+        }
+
+        $thumb = $request->file('gambar');
+        $filename = time() . '.' . $thumb->getClientOriginalExtension();
+        $thumb->move('uploads/', $filename);
+
+        $data = $validator->validated();
+        $recipe = Recipe::create([
+            'judul' => $data['judul'],
+            'gambar' => $filename,
+            'cara_pembuatan' => $data['cara_pembuatan'],
+            'video' => $data['video'],
+            'user_email' => $data['user_email'],
+            'status_resep' => 'submit'
+        ]);
+
+        foreach (json_decode($request->bahan) as $bahan) {
+            Ingredients::create([
+                'nama' => $bahan->nama,
+                'satuan' => $bahan->satuan,
+                'banyak' => $bahan->banyak,
+                'keterangan' => $bahan->keterangan,
+                'resep_idresep' => $recipe->id
+            ]);
+        }
+
+        foreach (json_decode($request->alat) as $alat) {
+            Tool::create([
+                'nama' => $alat->nama,
+                'keterangan' => $alat->keterangan,
+                'resep_idresep' => $recipe->id
+            ]);
+        }
+
+        return response()->json([
+            "msg" => "Resep berhasil dibuat",
+            "data" => $recipe
+        ], 200);
     }
 }
