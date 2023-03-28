@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\Event;
 use App\Models\User;
 use App\Observers\UserObserver;
 
+use App\Models\Recipe;
+use App\Observers\RecipeObserver;
+
+use App\Models\Tool;
+use App\Observers\ToolObserver;
+
+use App\Models\Ingredients;
+use App\Observers\IngredientObserver;
+
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -31,5 +40,8 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         User::observe(UserObserver::class);
+        Recipe::observe(RecipeObserver::class);
+        Tool::observe(ToolObserver::class);
+        Ingredients::observe(IngredientObserver::class);
     }
 }

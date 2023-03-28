@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Recipe;
+use App\Models\Log;
 
 class RecipeObserver
 {
@@ -14,7 +15,11 @@ class RecipeObserver
      */
     public function created(Recipe $recipe)
     {
-        //
+        Log::create([
+            'module' => 'Recipe',
+            'action' => 'Create' . $recipe->judul . ' ID: ' . $recipe->id,
+            'useraccess' => $recipe->user_email
+        ]);
     }
 
     /**

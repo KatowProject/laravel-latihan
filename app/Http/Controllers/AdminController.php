@@ -165,7 +165,11 @@ class AdminController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return MessageError::message($validator->errors()->messages());
+            //return MessageError::message($validator->errors()->messages());
+            response()->json([
+                "msg" => "Error",
+                "data" => $validator->errors()->messages()
+            ], 400);
         }
 
         $thumb = $request->file('gambar');
