@@ -10,5 +10,10 @@ class Recipe extends Model
     use HasFactory;
 
     protected $table = 'resep';
-    protected $fillable = ['judul', 'gambar', 'cara_pembuatan', 'video', 'user_email', 'status_resep'];
+    protected $fillable = ['idresep', 'judul', 'gambar', 'cara_pembuatan', 'video', 'user_email', 'status_resep'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_email', 'email');
+    }
 }

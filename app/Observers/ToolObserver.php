@@ -41,7 +41,11 @@ class ToolObserver
      */
     public function deleted(Tool $tool)
     {
-        //
+        Log::create([
+            'module' => 'Tool',
+            'action' => 'Delete tool. ' . 'ID Recipe: ' . $tool->resep_idresep,
+            'useraccess' => '-'
+        ]);
     }
 
     /**

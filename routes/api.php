@@ -22,9 +22,18 @@ use App\Http\Controllers\AuthController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/recipes', [RecipeController::class, 'show_recipes']);
+Route::post('/recipes/get-recipe', [RecipeController::class, 'get_recipe_by_id']);
+Route::post('/recipes/rating', [RecipeController::class, 'rating']);
 
 Route::middleware(['admin.api'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard']);
+
     Route::post('/create-recipe', [AdminController::class, 'create_recipes']);
+    Route::post('/update-recipe/{id}', [AdminController::class, 'update_recipe']);
+    Route::delete('/delete-recipe/{id}', [AdminController::class, 'delete_recipe']);
+    Route::get('/publish/{id}', [AdminController::class, 'publish_recipe']);
+    Route::get('/unpublish/{id}', [AdminController::class, 'unpublish_recipe']);
 
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/register', [AdminController::class, 'show_register']);

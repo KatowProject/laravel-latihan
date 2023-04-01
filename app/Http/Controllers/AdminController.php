@@ -9,6 +9,7 @@ use App\Models\Recipe;
 use App\Models\Tool;
 use App\Models\Ingredients;
 use Helper\MessageError;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -198,7 +199,7 @@ class AdminController extends Controller
 
         foreach (json_decode($request->alat) as $alat) {
             Tool::create([
-                'nama' => $alat->nama,
+                'nama_alat' => $alat->nama,
                 'keterangan' => $alat->keterangan,
                 'resep_idresep' => $recipe->id
             ]);
@@ -207,6 +208,147 @@ class AdminController extends Controller
         return response()->json([
             "msg" => "Resep berhasil dibuat",
             "data" => $recipe
+        ], 200);
+    }
+
+    public function update_recipe(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'judul' => 'required|max:255',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cara_pembuatan' => 'required',
+            'video' => 'required',
+            'user_email' => 'required',
+            'bahan' => 'required',
+            'alat' => 'required',
+            '_method' => 'required|in:PUT'
+        ]);
+
+        if ($validator->fails()) {
+            return MessageError::message($validator->errors()->messages());
+        }
+
+        $thumb = $request->file('gambar');
+        $filename = time() . '.' . $thumb->getClientOriginalExtension();
+        $thumb->move('uploads', $filename);
+
+        $data = $validator->validated();
+
+        Recipe::where('idresep', $id)->update([
+            'judul' => $data['judul'],
+            'gambar' => 'uploads/' . $filename,
+            'cara_pembuatan' => $data['cara_pembuatan'],
+            'video' => $data['video'],
+            'user_email' => $data['user_email'],
+            'status_resep' => 'submit'
+        ]);
+
+        Ingredients::where('resep_idresep', $id)->delete();
+        Tool::where('resep_idresep', $id)->delete();
+
+        foreach (json_decode($request->bahan) as $bahan) {
+            Ingredients::create([
+                'nama' => $bahan->nama,
+                'satuan' => $bahan->satuan,
+                'banyak' => $bahan->banyak,
+                'keterangan' => $bahan->keterangan,
+                'resep_idresep' => $id
+            ]);
+        }
+
+        foreach (json_decode($request->alat) as $alat) {
+            Tool::create([
+                'nama_alat' => $alat->nama,
+                'keterangan' => $alat->keterangan,
+                'resep_idresep' => $id
+            ]);
+        }
+
+        return response()->json([
+            "msg" => "Resep berhasil diupdate",
+            "data" => $data
+        ], 200);
+    }
+
+    public function delete_recipe($id)
+    {
+        Tool::where('resep_idresep', $id)->delete();
+        Ingredients::where('resep_idresep', $id)->delete();
+        Recipe::where('idresep', $id)->delete();
+
+        return response()->json([
+            "msg" => "Resep berhasil dihapus",
+            "resep_id" => $id
+        ], 200);
+    }
+
+    public function publish_recipe($id)
+    {
+        $recipe = Recipe::find($id);
+        if (!$recipe) {
+            return response()->json([
+                "msg" => "Resep tidak ditemukan",
+                "data" => "Not Found"
+            ], 422);
+        }
+
+        Recipe::where('idresep', $id)->update(['status_resep' => 'publish']);
+
+        \App\Models\Log::create([
+            'modul' => 'publish',
+            'action' => 'publish resep dengan id ' . $id,
+            'useraccess' => $recipe->user_email || 'admin'
+        ]);
+
+        return response()->json([
+            "msg" => "Resep berhasil dipublish",
+            "data" => $recipe
+        ], 200);
+    }
+
+    public function unpublish_recipe($id)
+    {
+        $recipe = Recipe::find($id);
+        if (!$recipe) {
+            return response()->json([
+                "msg" => "Resep tidak ditemukan",
+                "data" => "Not Found"
+            ], 422);
+        }
+
+        Recipe::where('idresep', $id)->update(['status_resep' => 'unpublished   ']);
+
+        \App\Models\Log::create([
+            "modul" => "unpublish",
+            "action" => "unpublish resep dengan id " . $id,
+            "useraccess" => $recipe->user_email || "admin"
+        ]);
+
+        return response()->json([
+            "msg" => "Resep berhasil diunpublish",
+            "data" => $recipe
+        ], 200);
+    }
+
+    public function dashboard()
+    {
+        $total_recipes = Recipe::count();
+        $total_publish_recipes = Recipe::where('status_resep', 'publish')->count();
+        $popular_recipe = DB::table('resep')
+            ->select('judul', DB::raw('count(idresep_view) as jumlah'))
+            ->leftJoin('resep_view', 'resep.idresep', '=', 'resep_view.resep_idresep')
+            ->groupBy('judul')
+            ->orderBy(DB::raw('count(idresep_view)'), 'desc')
+            ->limit(10)
+            ->get();
+
+        return response()->json([
+            "msg" => "Dashboard",
+            "data" => [
+                "total_resep" => $total_recipes,
+                "total_resep_publish" => $total_publish_recipes,
+                "resep_populer" => $popular_recipe
+            ]
         ], 200);
     }
 }

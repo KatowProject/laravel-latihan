@@ -30,7 +30,11 @@ class RecipeObserver
      */
     public function updated(Recipe $recipe)
     {
-        //
+        Log::create([
+            'module' => 'Recipe',
+            'action' => 'Update' . $recipe->judul . ' ID: ' . $recipe->id,
+            'useraccess' => $recipe->user_email
+        ]);
     }
 
     /**
@@ -41,7 +45,11 @@ class RecipeObserver
      */
     public function deleted(Recipe $recipe)
     {
-        //
+        Log::create([
+            'module' => 'Recipe',
+            'action' => 'Delete' . $recipe->judul . ' ID: ' . $recipe->id,
+            'useraccess' => $recipe->user_email
+        ]);
     }
 
     /**
