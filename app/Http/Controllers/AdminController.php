@@ -36,7 +36,7 @@ class AdminController extends Controller
         return response()->json([
             "data" => [
                 'msg' => 'Register Success',
-                'name' => $user['name'],
+                'name' => $user['nama'],
                 'email' => $user['email'],
                 'role' => $user['role'],
             ]
@@ -75,7 +75,7 @@ class AdminController extends Controller
 
         if ($user) {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string',
+                'nama' => 'required|string',
                 'role' => 'required|in:admin,user',
                 'status' => 'required|in:aktif,nonaktif',
                 'email_validate' => 'required|email'
@@ -87,7 +87,8 @@ class AdminController extends Controller
 
             $data = $validator->validated();
 
-            User::where('id', $id)->update($data);
+            // update data
+            $user->update($data);
 
             return response()->json([
                 "msg" => "UserID: $id berhasil diupdate",
@@ -99,20 +100,18 @@ class AdminController extends Controller
     public function delete_register($id)
     {
         $user = User::find($id);
-
-        if ($user) {
-            User::destroy($id);
-
-            return response()->json([
-                "msg" => "UserID: $id berhasil dihapus",
-                "data" => $user
-            ], 200);
-        } else {
+        if (!$user) {
             return response()->json([
                 "msg" => "UserID: $id tidak ditemukan",
                 "data" => "Not Found"
             ], 404);
         }
+
+        $user->delete();
+        return response()->json([
+            "msg" => "UserID: $id berhasil dihapus",
+            "data" => $user
+        ], 200);
     }
 
     public function activation_account($id)

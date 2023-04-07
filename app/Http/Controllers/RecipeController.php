@@ -23,7 +23,7 @@ class RecipeController extends Controller
                 'idresep' => $r->idresep,
                 'judul' => $r->judul,
                 'gambar' => url($r->gambar),
-                'nama' => $r->user->name,
+                'nama' => $r->user->nama,
             ];
         }
 
@@ -41,7 +41,7 @@ class RecipeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return MessageError::message($validator->messages()->toArray());
+            return MessageError::message($validator->errors()->messages());
         }
 
         $recipe = Recipe::where('status_resep', 'publish')->where('idresep', $request->idresep)->get();
@@ -73,7 +73,7 @@ class RecipeController extends Controller
         ]);
 
         if ($v->fails()) {
-            return MessageError::message($v->messages()->toArray());
+            return MessageError::message($v->errors()->messages());
         }
 
         Rating::create([

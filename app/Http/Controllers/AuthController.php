@@ -17,9 +17,10 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $v = Validator::make($request->all(), [
-            'name' => 'required|string',
+            'nama' => 'required|string',
             'email' => 'required|email|unique:user,email',
             'password' => 'required|string|min:6',
+            'role' => 'required|in:admin,user',
             'confirmation_password' => 'required|same:password'
         ]);
 
@@ -32,7 +33,7 @@ class AuthController extends Controller
         User::create($user);
 
         $payload = [
-            'nama' => $user['name'],
+            'nama' => $user['nama'],
             'role' => 'user',
             'iat' => time(),
             'exp' => time() + 60 * 60 * 24
@@ -43,15 +44,15 @@ class AuthController extends Controller
         Log::create([
             'module' => 'Auth',
             'action' => 'Register',
-            'useraccess' => $user['name']
+            'useraccess' => $user['nama']
         ]);
 
         return response()->json([
             "data" => [
                 'msg' => 'Register Success',
-                'name' => $user['name'],
+                'nama' => $user['nama'],
                 'email' => $user['email'],
-                'role' => 'user',
+                'role' => $user['role'],
             ],
             'token' => "Bearer $token"
         ], 201);
@@ -70,7 +71,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($v->validated())) {
             $payload = [
-                'nama' => Auth::user()->name,
+                'nama' => Auth::user()->nama,
                 'role' => Auth::user()->role,
                 'iat' => time(),
                 'exp' => time() + 60 * 60 * 24
@@ -81,13 +82,13 @@ class AuthController extends Controller
             Log::create([
                 'module' => 'Auth',
                 'action' => 'Login',
-                'useraccess' => Auth::user()->name
+                'useraccess' => Auth::user()->nama
             ]);
 
             return response()->json([
                 "data" => [
                     'msg' => 'Login Success',
-                    'name' => Auth::user()->name,
+                    'nama' => Auth::user()->nama,
                     'email' => Auth::user()->email,
                     'role' => Auth::user()->role,
                 ],
