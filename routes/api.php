@@ -29,7 +29,7 @@ Route::post('/recipes/rating', [RecipeController::class, 'rating']);
 Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
-    Route::post('/create-recipe', [AdminController::class, 'create_recipes']);
+    Route::post('/create-recipe', [AdminController::class, 'create_recipe']);
     Route::post('/update-recipe/{id}', [AdminController::class, 'update_recipe']);
     Route::delete('/delete-recipe/{id}', [AdminController::class, 'delete_recipe']);
     Route::get('/publish/{id}', [AdminController::class, 'publish_recipe']);
