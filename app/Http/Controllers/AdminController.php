@@ -302,7 +302,7 @@ class AdminController extends Controller
         }
 
         $recipe->update(['status_resep' => 'publish']);
-        $recipe->first();
+        $recipe = $recipe->first();
         \App\Models\Log::create([
             'module' => 'publish',
             'action' => 'publish resep dengan id ' . $id,
