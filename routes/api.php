@@ -20,6 +20,14 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // });
 
+Route::get('/test', function () {
+    return response()->json([
+        'statusCode' => 200,
+        'message' => 'cookpad API',
+    ]);
+});
+
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/recipes', [RecipeController::class, 'show_recipes']);
