@@ -22,7 +22,7 @@ class RecipeController extends Controller
             $data[] = [
                 'idresep' => $r->idresep,
                 'judul' => $r->judul,
-                'gambar' => url($r->gambar),
+                'gambar' => url('uploads/' . $r->gambar),
                 'nama' => $r->user->nama,
             ];
         }
