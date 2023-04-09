@@ -20,7 +20,7 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // });
 
-Route::get('/test', function () {
+Route::get('/', function () {
     return response()->json([
         'statusCode' => 200,
         'message' => 'cookpad API',
