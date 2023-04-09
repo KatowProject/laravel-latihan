@@ -34,7 +34,6 @@ class RecipeController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'idresep' => 'required',
-            'email' => 'required'
         ]);
 
         if ($validator->fails()) {
