@@ -293,8 +293,8 @@ class AdminController extends Controller
 
     public function publish_recipe($id)
     {
-        $recipe = Recipe::where('idresep', $id)->first();
-        if (!$recipe) {
+        $recipe = Recipe::where('idresep', $id);
+        if (!$recipe->first()) {
             return response()->json([
                 "msg" => "Resep tidak ditemukan",
                 "data" => "Not Found"
@@ -302,7 +302,7 @@ class AdminController extends Controller
         }
 
         $recipe->update(['status_resep' => 'publish']);
-
+        $recipe->first();
         \App\Models\Log::create([
             'module' => 'publish',
             'action' => 'publish resep dengan id ' . $id,
