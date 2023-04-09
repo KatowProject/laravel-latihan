@@ -51,7 +51,7 @@ class AuthController extends Controller
                 'msg' => 'Register Success',
                 'nama' => $user['nama'],
                 'email' => $user['email'],
-                'role' => $user['role'],
+                'role' => 'user',
             ],
             'token' => "Bearer $token"
         ], 201);
