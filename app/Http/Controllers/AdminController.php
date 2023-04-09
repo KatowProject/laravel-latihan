@@ -352,11 +352,11 @@ class AdminController extends Controller
             ->get();
 
         return response()->json([
-            "msg" => "Dashboard",
             "data" => [
-                "total_resep" => $total_recipes,
-                "total_resep_publish" => $total_publish_recipes,
-                "resep_populer" => $popular_recipe
+                "msg" => "Dashboard Monitoring",
+                "totalRecipes" => $total_recipes,
+                "totalPublishRecipes" => $total_publish_recipes,
+                "popularRecipe" => $popular_recipe
             ]
         ], 200);
     }
