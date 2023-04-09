@@ -90,8 +90,8 @@ class AdminController extends Controller
             // update data
             $user->update($data);
 
+            $data['msg'] = "UserID: $id berhasil diupdate";
             return response()->json([
-                "msg" => "UserID: $id berhasil diupdate",
                 "data" => $data
             ], 200);
         }
@@ -102,14 +102,15 @@ class AdminController extends Controller
         $user = User::find($id);
         if (!$user) {
             return response()->json([
-                "msg" => "UserID: $id tidak ditemukan",
-                "data" => "Not Found"
+                "data" => [
+                    "msg" => "user tidak ditemukan",
+                ]
             ], 404);
         }
 
         $user->delete();
+        $user['msg'] = "UserID: $id berhasil dihapus";
         return response()->json([
-            "msg" => "UserID: $id berhasil dihapus",
             "data" => $user
         ], 200);
     }
@@ -117,39 +118,38 @@ class AdminController extends Controller
     public function activation_account($id)
     {
         $user = User::find($id);
-
-        if ($user) {
-            User::where('id', $id)->update(['status' => 'aktif']);
-
+        if (!$user) {
             return response()->json([
-                "msg" => "UserID: $id berhasil diaktifkan",
-                "data" => $user
-            ], 200);
-        } else {
-            return response()->json([
-                "msg" => "UserID: $id tidak ditemukan",
-                "data" => "Not Found"
+                "data" => "user tidak ditemukan"
             ], 404);
         }
+
+        $user->update(['status' => 'aktif']);
+
+        $data['msg'] = "UserID: $id berhasil diaktifkan";
+        return response()->json([
+            "data" => $user
+        ], 200);
     }
 
     public function deactivation_account($id)
     {
         $user = User::find($id);
-
-        if ($user) {
-            User::where('id', $id)->update(['status' => 'nonaktif']);
-
+        if (!$user) {
             return response()->json([
-                "msg" => "UserID: $id berhasil dinonaktifkan",
-                "data" => $user
-            ], 200);
-        } else {
-            return response()->json([
-                "msg" => "UserID: $id tidak ditemukan",
-                "data" => "Not Found"
+                "data" => [
+                    "msg" => "user tidak ditemukan",
+                ]
             ], 404);
         }
+
+        $user->update(['status' => 'nonaktif']);
+
+        $user['msg'] = "UserID: $id berhasil dinonaktifkan";
+        return response()->json([
+            "data" => $user
+        ], 200);
+
     }
 
     public function create_recipe(Request $request)
@@ -220,11 +220,21 @@ class AdminController extends Controller
             'user_email' => 'required',
             'bahan' => 'required',
             'alat' => 'required',
-            '_method' => 'required|in:PUT'
+            '__method' => 'required|in:PUT'
         ]);
 
         if ($validator->fails()) {
             return MessageError::message($validator->errors()->messages());
+        }
+
+        // custom key
+        $recipe = Recipe::where('idresep', $id);
+        if (!$recipe->first()) {
+            return response()->json([
+                "data" => [
+                    "msg" => "Resep tidak ditemukan",
+                ]
+            ], 404);
         }
 
         $thumb = $request->file('gambar');
@@ -233,9 +243,9 @@ class AdminController extends Controller
 
         $data = $validator->validated();
 
-        Recipe::where('idresep', $id)->update([
+        $recipe->update([
             'judul' => $data['judul'],
-            'gambar' => 'uploads/' . $filename,
+            'gambar' => $filename,
             'cara_pembuatan' => $data['cara_pembuatan'],
             'video' => $data['video'],
             'user_email' => $data['user_email'],
@@ -263,8 +273,8 @@ class AdminController extends Controller
             ]);
         }
 
+        $data['msg'] = "Resep berhasil diupdate";
         return response()->json([
-            "msg" => "Resep berhasil diupdate",
             "data" => $data
         ], 200);
     }

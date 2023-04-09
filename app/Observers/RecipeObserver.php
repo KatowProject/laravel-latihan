@@ -43,7 +43,7 @@ class RecipeObserver
      * @param  \App\Models\Recipe  $recipe
      * @return void
      */
-    public function deleted(Recipe $recipe)
+    public function deleting(Recipe $recipe)
     {
         Log::create([
             'module' => 'Recipe',
