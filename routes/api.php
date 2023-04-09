@@ -23,8 +23,16 @@ use App\Http\Controllers\AuthController;
 Route::get('/', function () {
     return response()->json([
         'statusCode' => 200,
-        'message' => 'cookpad API',
+        'message' => 'Welcome to cookpad API',
     ]);
+});
+
+Route::get('/author', function () {
+    return response()->json([
+        'nama' => 'M. Naufal Faqih',
+        'nim' => '21416255201168',
+        'kelas' => 'IF21B'
+    ], 200);
 });
 
 
@@ -40,6 +48,7 @@ Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::post('/create-recipe', [AdminController::class, 'create_recipe']);
     Route::post('/update-recipe/{id}', [AdminController::class, 'update_recipe']);
     Route::delete('/delete-recipe/{id}', [AdminController::class, 'delete_recipe']);
+
     Route::get('/publish/{id}', [AdminController::class, 'publish_recipe']);
     Route::get('/unpublish/{id}', [AdminController::class, 'unpublish_recipe']);
 
@@ -48,6 +57,7 @@ Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::get('/register/{id}', [AdminController::class, 'show_register_by_id']);
     Route::put('/register/{id}', [AdminController::class, 'update_register']);
     Route::delete('/register/{id}', [AdminController::class, 'delete_register']);
+
     Route::get('/activation-account/{id}', [AdminController::class, 'activation_account']);
     Route::get('/deactivation-account/{id}', [AdminController::class, 'deactivation_account']);
 });

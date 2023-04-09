@@ -293,7 +293,7 @@ class AdminController extends Controller
 
     public function publish_recipe($id)
     {
-        $recipe = Recipe::find($id);
+        $recipe = Recipe::where('idresep', $id)->first();
         if (!$recipe) {
             return response()->json([
                 "msg" => "Resep tidak ditemukan",
@@ -301,12 +301,12 @@ class AdminController extends Controller
             ], 422);
         }
 
-        Recipe::where('idresep', $id)->update(['status_resep' => 'publish']);
+        $recipe->update(['status_resep' => 'publish']);
 
         \App\Models\Log::create([
-            'modul' => 'publish',
+            'module' => 'publish',
             'action' => 'publish resep dengan id ' . $id,
-            'useraccess' => $recipe->user_email || 'admin'
+            'useraccess' => $recipe['user_email'] || 'admin'
         ]);
 
         return response()->json([
@@ -317,20 +317,20 @@ class AdminController extends Controller
 
     public function unpublish_recipe($id)
     {
-        $recipe = Recipe::find($id);
-        if (!$recipe) {
+        $recipe = Recipe::where('idresep', $id);
+        if (!$recipe->first()) {
             return response()->json([
                 "msg" => "Resep tidak ditemukan",
                 "data" => "Not Found"
             ], 422);
         }
 
-        Recipe::where('idresep', $id)->update(['status_resep' => 'unpublished   ']);
-
+        $recipe->update(['status_resep' => 'unpublished']);
+        $recipe = $recipe->first();
         \App\Models\Log::create([
-            "modul" => "unpublish",
+            "module" => "unpublish",
             "action" => "unpublish resep dengan id " . $id,
-            "useraccess" => $recipe->user_email || "admin"
+            "useraccess" => $recipe['user_email'] || "admin"
         ]);
 
         return response()->json([

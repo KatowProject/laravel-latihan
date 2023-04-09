@@ -20,7 +20,6 @@ class AuthController extends Controller
             'nama' => 'required|string',
             'email' => 'required|email|unique:user,email',
             'password' => 'required|string|min:6',
-            'role' => 'required|in:admin,user',
             'confirmation_password' => 'required|same:password'
         ]);
 
