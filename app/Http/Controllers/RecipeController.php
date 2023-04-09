@@ -27,10 +27,7 @@ class RecipeController extends Controller
             ];
         }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $data
-        ]);
+        return response()->json($data, 200);
     }
 
     public function get_recipe_by_id(Request $request)
