@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RecipeController;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/recipes', [RecipeController::class, 'show_recipes']);
 Route::post('/recipes/get-recipe', [RecipeController::class, 'get_recipe_by_id']);
 Route::post('/recipes/rating', [RecipeController::class, 'rating']);
+
+
+Route::middleware(['user.api'])->prefix('user')->group(function() {
+    Route::post('/submit-recipe', [UserController::class, 'create_recipe']);
+});
 
 Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard']);
