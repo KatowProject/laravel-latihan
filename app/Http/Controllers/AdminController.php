@@ -69,6 +69,33 @@ class AdminController extends Controller
         }
     }
 
+    public function show_recipes()
+    {
+        $recipes = Recipe::all();
+
+        return response()->json([
+            "msg" => "Recipe List",
+            "data" => $recipes
+        ], 200);
+
+    }
+
+    public function show_recipe($id)
+    {
+        $recipe = Recipe::find($id);
+        if (!$recipe) {
+            return response()->json([
+                "msg" => "Recipe List",
+                "data" => "Not Found"
+            ], 404);
+        }
+
+        return response()->json([
+            "msg" => "Recipe List",
+            "data" => $recipe
+        ], 200);
+    }
+
     public function update_register(Request $request, $id)
     {
         $user = User::find($id);

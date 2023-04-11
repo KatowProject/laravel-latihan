@@ -51,6 +51,8 @@ Route::middleware(['user.api'])->prefix('user')->group(function() {
 Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
+    Route::get('/show-recipes', [AdminController::class, 'show_recipes']);
+    Route::get('/show-recipes/{id}', [AdminController::class, 'show_recipe']);
     Route::post('/create-recipe', [AdminController::class, 'create_recipe']);
     Route::post('/update-recipe/{id}', [AdminController::class, 'update_recipe']);
     Route::delete('/delete-recipe/{id}', [AdminController::class, 'delete_recipe']);
