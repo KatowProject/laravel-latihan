@@ -60,8 +60,10 @@ class UserController extends Controller
         }
 
         return response()->json([
-            "msg" => "Resep berhasil dibuat",
-            "data" => $recipe
+            "data" => [
+                'msg' => 'Resep berhasil ditambahkan',
+                'resep' => $data['judul']
+            ]
         ], 200);
     }
 }
