@@ -93,7 +93,7 @@ class RecipeController extends Controller
     {
         $v = Validator::make($request->all(), [
             'idresep' => 'required',
-            'email_user' => 'required',
+            'email' => 'required',
             'rating' => 'required|in:1,2,3,4,5'
         ]);
 
@@ -110,7 +110,7 @@ class RecipeController extends Controller
         }
 
         Rating::create([
-            'email' => $request->email,
+            'email_user' => $request->email,
             'review' => $request->review,
             'resep_idresep' => $request->idresep,
             'rating' => $request->rating
