@@ -32,6 +32,14 @@ class RecipeController extends Controller
 
     public function get_recipe_by_id(Request $request)
     {
+        $recipe = Recipe::where('status_resep', 'publish')->where('idresep', $request->idresep);
+        if (!$recipe->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Resep tidak ditemukan'
+            ], 404);
+        }
+
         $validator = Validator::make($request->all(), [
             'idresep' => 'required',
         ]);
@@ -39,6 +47,7 @@ class RecipeController extends Controller
         if ($validator->fails()) {
             return MessageError::message($validator->errors()->messages());
         }
+
 
         $recipes = Recipe::where('status_resep', 'publish')->where('idresep', $request->idresep)->get();
         $tools = Tool::where('resep_idresep', $request->idresep)->get();
@@ -58,7 +67,7 @@ class RecipeController extends Controller
         }
 
         RecipeView::create([
-            'email' => $request->email ?? null,
+            'email' => $request->email ?? 'guest',
             'date' => now(),
             'resep_idresep' => $request->idresep
         ]);
