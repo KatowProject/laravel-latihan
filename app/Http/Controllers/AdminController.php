@@ -310,7 +310,7 @@ class AdminController extends Controller
         ]);
 
         return response()->json([
-            "msg" => "Resep berhasil dipublish",
+            "msg" => "Resep berhasil dipublish. ID Resep: " . $id,
             "data" => $recipe
         ], 200);
     }
@@ -334,7 +334,7 @@ class AdminController extends Controller
         ]);
 
         return response()->json([
-            "msg" => "Resep berhasil diunpublish",
+            "msg" => "Resep berhasil diunpublish. ID Resep: " . $id,
             "data" => $recipe
         ], 200);
     }

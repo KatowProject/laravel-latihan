@@ -48,6 +48,14 @@ class RecipeController extends Controller
             return MessageError::message($validator->errors()->messages());
         }
 
+        $id = $request->idresep;
+        $recipe = Recipe::where('idresep', $id)->first();
+        if (!$recipe) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Resep tidak ditemukan'
+            ], 404);
+        }
 
         $recipes = Recipe::where('status_resep', 'publish')->where('idresep', $request->idresep)->get();
         $tools = Tool::where('resep_idresep', $request->idresep)->get();
@@ -101,8 +109,9 @@ class RecipeController extends Controller
         ]);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Berhasil memberikan rating'
+            'data' => [
+                'msg' => 'Berhasil memberi rating'
+            ]
         ]);
     }
 }
