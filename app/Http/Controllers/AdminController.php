@@ -73,6 +73,11 @@ class AdminController extends Controller
     {
         $recipes = Recipe::all();
 
+        $data = [];
+        foreach ($recipes as $recipe) {
+            $recipe['gambar'] = url('uploads/' . $recipe['gambar']);
+            $data[] = $recipe;
+        }
         return response()->json([
             "msg" => "Recipe List",
             "data" => $recipes
