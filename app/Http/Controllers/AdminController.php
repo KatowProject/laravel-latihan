@@ -82,7 +82,7 @@ class AdminController extends Controller
 
     public function show_recipe($id)
     {
-        $recipe = Recipe::find($id);
+        $recipe = Recipe::where('idresep', $id)->first();
         if (!$recipe) {
             return response()->json([
                 "msg" => "Recipe List",
