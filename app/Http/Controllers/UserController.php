@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Recipe;
 use App\Models\Ingredients;
 use App\Models\Tool;
+use Helper\MessageError;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -23,11 +24,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            //return MessageError::message($validator->errors()->messages());
-            response()->json([
-                "msg" => "Error",
-                "data" => $validator->errors()->messages()
-            ], 400);
+            return MessageError::message($validator->errors()->messages());
         }
 
         $thumb = $request->file('gambar');

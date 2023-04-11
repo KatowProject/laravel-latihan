@@ -101,6 +101,14 @@ class RecipeController extends Controller
             return MessageError::message($v->errors()->messages());
         }
 
+        $recipe = Recipe::where('idresep', $request->idresep)->first();
+        if (!$recipe) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Resep tidak ditemukan'
+            ], 404);
+        }
+
         Rating::create([
             'email' => $request->email,
             'review' => $request->review,
